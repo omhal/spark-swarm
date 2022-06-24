@@ -1,5 +1,4 @@
 FROM debian:stretch
-MAINTAINER Michael Kamprath "https://github.com/michaelkamprath"
 #
 # Base image for Apace Spak standalone cluster. 
 #
