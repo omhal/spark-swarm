@@ -1,0 +1,83 @@
+version: '3.4'
+services:
+    spark-master:
+        image: master:5000/simple-spark-cluster-node:latest
+        command: ["/bin/bash", "/start-spark-master.sh"]
+        hostname: spark-master
+        networks:
+            - cluster_network
+        ports:
+            - 6066:6066
+            - 7077:7077
+            - 8080:8080
+            - 18080:18080
+        volumes:
+            - type: bind
+              source: /mnt/gfs/data
+              target: /data
+            - type: bind
+              source: /mnt/data/spark
+              target: /app/spark
+        deploy:
+            resources:
+                limits:
+                    cpus: "1"
+                    memory: 1g     
+    spark-worker:
+        image: master:5000/simple-spark-cluster-node:latest
+        hostname: spark-worker
+        depends_on:
+            - qfs-master
+            - spark-master
+        networks:
+            - cluster_network
+        ports:
+            - 8081:8081
+        volumes:
+            - type: bind
+              source: /mnt/gfs/data
+              target: /data
+            - type: bind
+              source: /mnt/data/spark
+              target: /app/spark
+        deploy:
+            mode: global
+            resources:
+                limits:
+                    memory: 8g
+    spark-jupyter:
+        image: master:5000/simple-spark-cluster-jupyter:latest
+        hostname: spark-jupyter
+        depends_on:
+            - spark-master
+            - spark-worker
+        networks:
+            - cluster_network
+        ports:
+            - 7777:7777
+            - 4040:4040
+            - 4041:4041
+        volumes:
+            - type: bind
+              source: /mnt/gfs/jupyter-notebooks
+              target: /home/spark/jupyter/notebooks
+            - type: bind
+              source: /mnt/gfs/data
+              target: /data
+            - type: bind
+              source: /mnt/data/spark
+              target: /app/spark
+        deploy:
+            resources:
+                limits:
+                    cpus: "1"
+                    memory: 2g
+
+networks:
+    cluster_network:
+        attachable: true
+        ipam:
+            driver: default
+            config:
+                - subnet: 10.20.30.0/24
+
