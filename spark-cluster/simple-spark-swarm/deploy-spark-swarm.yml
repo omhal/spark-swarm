@@ -1,7 +1,7 @@
 version: '3.4'
 services:
     spark-master:
-        image: master:5000/simple-spark-cluster-node:latest
+        image: localhost:5000/simple-spark-cluster-node
         command: ["/bin/bash", "/start-spark-master.sh"]
         hostname: spark-master
         networks:
@@ -24,7 +24,7 @@ services:
                     cpus: "1"
                     memory: 1g     
     spark-worker:
-        image: master:5000/simple-spark-cluster-node:latest
+        image: localhost:5000/simple-spark-cluster-node
         hostname: spark-worker
         depends_on:
             - qfs-master
@@ -46,7 +46,7 @@ services:
                 limits:
                     memory: 8g
     spark-jupyter:
-        image: master:5000/simple-spark-cluster-jupyter:latest
+        image: localhost:5000/simple-spark-cluster-jupyter
         hostname: spark-jupyter
         depends_on:
             - spark-master

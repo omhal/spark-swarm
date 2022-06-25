@@ -1,4 +1,4 @@
-FROM simple-spark-cluster-node:latest
+FROM simple-spark-cluster-node
 
 #
 # Expected volumes:

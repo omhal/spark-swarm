@@ -1,4 +1,5 @@
-FROM debian:stretch
+FROM debian
+
 #
 # Base image for Apace Spak standalone cluster. 
 #
@@ -47,7 +48,7 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 
 # JAVA & SCALA
 RUN apt-get update \
- && apt-get install -y openjdk-8-jre \
+ && apt-get install -y openjdk-11-jre \
  && apt-get remove scala-library scala  \
  && curl -o scala-${SCALA_VERSION}.deb https://www.scala-lang.org/files/archive/scala-${SCALA_VERSION}.deb \
  && dpkg -i scala-${SCALA_VERSION}.deb \
@@ -65,17 +66,14 @@ ENV SPARK_HOME /usr/spark-${SPARK_VERSION}
 #ENV SPARK_DIST_CLASSPATH=""
 ENV HADOOP_CONF_DIR=${SPARK_HOME}/conf/
 ENV PATH $PATH:${SPARK_HOME}/bin
-ARG SPARK_DOWNLOAD_URL="https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/${SPARK_PACKAGE}.tgz"
-RUN echo "Downloading Spark from : ${SPARK_DOWNLOAD_URL}\n" \
-	&& curl -L --retry 3  \
-	     $SPARK_DOWNLOAD_URL \
-           | tar zxvf -C /tmp/ \
-	&& mv /tmp/$SPARK_PACKAGE $SPARK_HOME \
+COPY spark-3.3.0.tgz /home
+RUN tar xzf /home/spark-3.3.0.tgz -C /usr/ \
+        && rm -rf /home/spark-3.3.0.tgz \
+        && cp -al /usr/spark-3.3.0/* $SPARK_HOME \
 	&& chown -R root:root $SPARK_HOME \
 	&& ln -s $SPARK_HOME /usr/local/spark
 RUN mkdir -p /app/spark \
  && chown spark -R /app/spark
- 
 
 # add python libraries useful in PySpark
 RUN python3 -mpip install matplotlib \

@@ -20,13 +20,13 @@ else
 fi
 
 # build images
-docker build -t simple-spark-cluster-node:latest $DOCKER_BUILD_ARGS ./simple-spark-cluster-node
-docker build -t simple-spark-cluster-jupyter:latest $DOCKER_BUILD_ARGS ./simple-spark-cluster-jupyter
+docker build -t simple-spark-cluster-node $DOCKER_BUILD_ARGS ./simple-spark-cluster-node
+docker build -t simple-spark-cluster-jupyter $DOCKER_BUILD_ARGS ./simple-spark-cluster-jupyter
 
 # tag image with local repository
-docker tag simple-spark-cluster-node:latest master:5000/simple-spark-cluster-node:latest
-docker tag simple-spark-cluster-jupyter:latest master:5000/simple-spark-cluster-jupyter:latest
+docker tag simple-spark-cluster-node localhost:5000/simple-spark-cluster-node
+docker tag simple-spark-cluster-jupyter localhost:5000/simple-spark-cluster-jupyter
 
 # push the images to local repository
-docker push master:5000/simple-spark-cluster-node:latest
-docker push master:5000/simple-spark-cluster-jupyter:latest
+docker push localhost:5000/simple-spark-cluster-node
+docker push localhost:5000/simple-spark-cluster-jupyter
